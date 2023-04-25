@@ -1,7 +1,9 @@
 local function update_solar(player)
-    local x = player:get_pos().x
-    local z = player:get_pos().z
-    local day = minetest.get_day_count() + minetest.get_timeofday()
+    local pos = player:get_pos()
+    local x = pos.x
+    local z = pos.z
+    local time_of_day = minetest.get_timeofday()
+    local day = minetest.get_day_count() + time_of_day
     local season = day / 30
     -- at z = +-31k, it's north/south pole, where sun height doesn't change over the day
     local mag = 3 - math.abs(z) / 31000 * 3
@@ -10,7 +12,7 @@ local function update_solar(player)
     local time_offset = (1 / 24) * x / 31000
 
     local ratio = base
-        + mag * math.sin((minetest.get_timeofday() - 0.25 + time_offset) * math.pi * 2)
+        + mag * math.sin((time_of_day - 0.25 + time_offset) * math.pi * 2)
 
     player:override_day_night_ratio(
         math.max(0, math.min(1, ratio))
