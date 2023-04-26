@@ -14,6 +14,19 @@ local function load()
     end
 end
 
+local function hide_sky(player)
+    player:set_sun({
+        visible = false,
+        sunrise_visible = false
+    })
+    player:set_moon({
+        visible = false
+    })
+    player:set_stars({
+        visible = false
+    })
+end
+
 local function update_solar(player)
     local pos = player:get_pos()
     local x = pos.x
@@ -30,22 +43,16 @@ local function update_solar(player)
     local ratio = base
         + mag * math.sin((time_of_day - 0.25 + time_offset) * math.pi * 2)
 
+    -- games / mods might override sky
+    -- this is an aggressive way of undoing it
+    hide_sky(player)
     player:override_day_night_ratio(
         math.max(0, math.min(1, ratio))
     )
 end
 
 minetest.register_on_joinplayer(function(player, last_login)
-    player:set_sun({
-        visible = false,
-        sunrise_visible = false
-    })
-    player:set_moon({
-        visible = false
-    })
-    player:set_stars({
-        visible = false
-    })
+    hide_sky(player)
     update_solar(player)
     minetest.register_globalstep(function(dtime)
         update_solar(player)
