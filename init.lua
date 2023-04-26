@@ -2,6 +2,7 @@ local moddata = {
     days_offset = 0
 }
 local storage = minetest.get_mod_storage("solarphases")
+local MAPGEN_LIMIT = minetest.get_mapgen_setting("mapgen_limit")
 
 local function save()
     storage:set_float("days_offset", moddata.days_offset)
@@ -21,10 +22,10 @@ local function update_solar(player)
     local day = moddata.days_offset + minetest.get_day_count() + time_of_day
     local season = day / 30
     -- at z = +-31k, it's north/south pole, where sun height doesn't change over the day
-    local mag = 3 - math.abs(z) / 31000 * 3
-    local base = 0.75 + 1.5 * z / 31000 * math.sin(season * 2 * math.pi)
-    -- true noon => 1h earlier to 1h later
-    local time_offset = (1 / 24) * x / 31000
+    local mag = 3 - math.abs(z) / MAPGEN_LIMIT * 3
+    local base = 0.75 + 1.5 * z / MAPGEN_LIMIT * math.sin(season * 2 * math.pi)
+    -- true noon => 2h earlier to 2h later
+    local time_offset = (2 / 24) * x / MAPGEN_LIMIT
 
     local ratio = base
         + mag * math.sin((time_of_day - 0.25 + time_offset) * math.pi * 2)
