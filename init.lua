@@ -1,9 +1,24 @@
+local moddata = {
+    days_offset = 0
+}
+local storage = minetest.get_mod_storage("solarphases")
+
+local function save()
+    storage:set_float("days_offset", moddata.days_offset)
+end
+
+local function load()
+    if storage:contains("days_offset") then
+        moddata.days_offset = storage:get_float("days_offset")
+    end
+end
+
 local function update_solar(player)
     local pos = player:get_pos()
     local x = pos.x
     local z = pos.z
     local time_of_day = minetest.get_timeofday()
-    local day = minetest.get_day_count() + time_of_day
+    local day = moddata.days_offset + minetest.get_day_count() + time_of_day
     local season = day / 30
     -- at z = +-31k, it's north/south pole, where sun height doesn't change over the day
     local mag = 3 - math.abs(z) / 31000 * 3
@@ -35,3 +50,27 @@ minetest.register_on_joinplayer(function(player, last_login)
         update_solar(player)
     end)
 end)
+
+minetest.register_chatcommand("setdays", {
+    description = [[Allows setting the time and the day of the world as a float
+
+Format: <day>.<time_of_day>]],
+    params = "[days] (float)",
+    privs = {settime = true},
+    func = function (name, param)
+        if param == nil then
+            return false
+        end
+        local days = tonumber(param)
+        if days == nil then
+            return false
+        end
+
+        minetest.set_timeofday(days % 1.0)
+        moddata.days_offset = math.floor(days) - minetest.get_day_count()
+        save()
+        return true, "time set"
+    end
+})
+
+load()
