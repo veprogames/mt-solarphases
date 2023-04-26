@@ -15,3 +15,5 @@ Sun, Moon and Stars are disabled, because they are hardcoded to the time of day.
 You can also use `/setdays [days]` to set the day to a float. This doesn't change the ingame day count as I've not found a way for that, it keeps an offset in the background to calculate brightness of the day correctly.
 
 Spawning on a random position in the world is out of scope of this mods functionality and therefore not included.
+
+Note: [LICENSE_MEDIA](./LICENSE_MEDIA) applies to the Screenshots in this Repo, the Mod itself doesn't contain any audiovisual assets.
